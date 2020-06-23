@@ -1,0 +1,19 @@
+---
+version: '3'
+networks:
+  streamflow_streamflow: # Kafka's network
+    external: true  
+volumes:
+  streamflow_streamflow:
+    external: true      
+services:
+  producer:
+    networks:
+      - streamflow_streamflow
+    volumes:
+      - streamflow_streamflow:/var/lib/producer        
+    restart: on-failure
+    build:
+      context: ./    
+    ports:
+      - 5001:5000

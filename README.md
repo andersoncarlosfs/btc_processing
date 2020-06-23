@@ -1,20 +1,55 @@
-# Introduction 
-TODO: Give a short introduction of your project. Let this section explain the objectives or the motivation behind this project. 
+# Introduction
+Le bitcoin (BTC) est une monnaie virtuelle dont il existe des cours d'échange vers les monnaies fiduciaires, comme l'euro ou le dollar. C'est une monnaie complètement transparente, ce qui signifie qu'il est possible de suivre en direct toutes les transactions réalisées en bitcoin.
 
-# Getting Started
-TODO: Guide users through getting your code up and running on their own system. In this section you can talk about:
-1.	Installation process
-2.	Software dependencies
-3.	Latest releases
-4.	API references
+Mais d'où les bitcoins viennent-ils ? Pour les générer (on dit : "miner") il faut réaliser des calculs complexes qui nécessitent d’importantes ressources en CPU et en GPU, et donc du temps. Comme pour les transactions, le minage des bitcoins est public : lorsqu'un bloc de bitcoins est découvert tout le monde est mis au courant en même temps et on peut bien souvent savoir quelle est l'identité du mineur.
 
-# Build and Test
-TODO: Describe and show how to build your code and run the tests. 
+# Resources
+- Docker
+- Kafka 
+- Storm
 
-# Contribute
-TODO: Explain how other users and developers can contribute to make your code better. 
+# Build
+The containers will automatically built in the first run.
 
-If you want to learn more about creating good readme files then refer the following [guidelines](https://docs.microsoft.com/en-us/azure/devops/repos/git/create-a-readme?view=azure-devops). You can also seek inspiration from the below readme files:
-- [ASP.NET Core](https://github.com/aspnet/Home)
-- [Visual Studio Code](https://github.com/Microsoft/vscode)
-- [Chakra Core](https://github.com/Microsoft/ChakraCore)
+## Deployment
+```
+$docker-compose up
+```
+
+### Detached or foreground running 
+```
+$docker-compose up -d
+```
+# Results
+The results are outputted by API call or written in a volume. An improvement could be the broadcasting of the results.
+
+## API call
+The results can be visualised from "[http://0.0.0.0:5001/view]('http://0.0.0.0:5001/view')".
+
+## Volume
+The results are written in a volume ending with *"_streamflow"*. Before accesing the files in the folder "output", the volume ending with *"_streamflow"* should be attached to a container, for instance: "busybox".
+
+### Mounting 
+```
+$docker run -it -v Lalamove_streamflow:/volume ubuntu bin/bash
+```
+
+### Reading
+```
+$cd volume/output/
+```
+
+# Failover
+- If one of the services crashes, it will be restarted automatically by docker-compose (Daemon)
+
+# Scaling
+- Deployment of more nodes in a cluster Spark cluster (workers) and/or Kafka cluster (brokers). 
+- Broadcasting the results via Kafka
+
+# Limitations
+- The consumer gets the data at once. However, it supports stream processing
+
+# Copyrights
+- OpenClassrooms
+
+
