@@ -1,16 +1,6 @@
 #!flask/bin/python
 # -*- coding: utf-8 -*-
-import glob
 import json
-import random
-import os
-
-from apscheduler import events
-from apscheduler.schedulers.background import BackgroundScheduler
-
-from flask import Flask
-from flask import jsonify
-from flask import request
 
 from kafka import KafkaProducer
 
@@ -18,10 +8,6 @@ from generator import DEFAULT_LOGS
 from generator import DEFAULT_START
 from generator import Generator
 from generator import get_parser
-
-application=Flask(__name__)
-
-scheduler=BackgroundScheduler(daemon=True)
 
 DEFAULT_VOLUME='/var/lib/producer/output'
 DEFAULT_BROKERS=['0.0.0.0:9092', 'kafka:29092']
@@ -58,59 +44,9 @@ def send_records(topic, messages=[], producer=new_producer(), on_send_success=No
     # Locking until all asynchronous messages are sent
     producer.flush()   
 
-# Creating a job
-def new_job(identifier, generator):        
-    # Adding the job
-    scheduler.add_job(
-        generator.start,
-        id=identifier, 
-        replace_existing=True
-    )    
-
-# Streaming a list of records
-@application.route('/start', methods=['GET'])
-def start():
-    # Getting the parameters for the Scheduler
-    status=request.args.get('status', default=True, type=bool)
-    topic=request.args.get('topic', default=DEFAULT_TOPIC, type='str')
-            
-    # Managing the job
-    if status:
-        new_job(
-            topic,
-            generator
-        )     
-    
-    # Returning the status
-    return jsonify(status=status)
-
-# Streaming a list of records
-@application.route('/stop', methods=['GET'])
-def stop():
-    # Getting the parameters for the Scheduler
-    status=request.args.get('status', default=True, type=bool)
-    topic=request.args.get('topic', default=DEFAULT_TOPIC, type='str')
-            
-    # Managing the job
-    if status:
-        generator.stop()
-        
-        for job in scheduler.get_jobs():
-            if job.id is topic:
-                scheduler.remove_job(topic)        
-    
-    # Returning the status
-    return jsonify(status=status)
-
 if __name__ == '__main__':
 
     parser=get_parser()
-    
-    parser.add_argument('--stream',
-                        dest='stream',
-                        type=int,
-                        help='stream between streamings, in seconds'
-                       )
     
     parser.add_argument('--brokers',
                         dest='brokers',
@@ -160,13 +96,6 @@ if __name__ == '__main__':
             }) 
         )
     )
-    
+   
     if arguments.start:
-        new_job(
-            arguments.topic,
-            generator 
-        )
-
-    scheduler.start()
-        
-    application.run(host='0.0.0.0', debug=True)
+        generator.start()

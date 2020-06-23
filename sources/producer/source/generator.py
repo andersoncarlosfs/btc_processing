@@ -18,16 +18,12 @@ class Generator(object):
         self.logs = logs
         self.process = process        
         
-        self.status = False
-        
     def start(self):
         ws = Generator.__open_websocket_to_blockchain()
 
         last_ping_time = time()
-        
-        self.status = True
 
-        while self.status:
+        while True:
             # Receive event
             data = json.loads(ws.recv())
 
@@ -84,9 +80,6 @@ class Generator(object):
             else:
                 if self.logs:
                     print("Unknown op: {}".format(data["op"]))
-
-    def stop(self):
-        self.status = False
 
     @staticmethod
     def __open_websocket_to_blockchain():
