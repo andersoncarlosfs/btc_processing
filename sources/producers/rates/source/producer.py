@@ -9,10 +9,10 @@ from generator import DEFAULT_START
 from generator import Generator
 from generator import get_parser
 
-DEFAULT_VOLUME='/var/lib/producer/output'
+DEFAULT_VOLUME='/var/lib/rates/output'
 DEFAULT_BROKERS=['0.0.0.0:9092', 'kafka:29092']
 DEFAULT_RETRIES=0
-DEFAULT_TOPIC='transactions'
+DEFAULT_TOPIC='rates'
 
 # Creating a Producer
 def new_producer(brokers=DEFAULT_BROKERS, retries=DEFAULT_RETRIES):

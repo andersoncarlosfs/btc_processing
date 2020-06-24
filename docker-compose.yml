@@ -30,18 +30,26 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-  producer:
+  transactions:
     networks:
       - streamflow
     volumes:
-      - streamflow:/var/lib/producer      
+      - streamflow:/var/lib/transactions      
     depends_on:
       - kafka
     restart: on-failure
     build:
-      context: ./sources/producer
-    ports:
-      - 5001:5000
+      context: ./sources/producers/transactions/
+  rates:
+    networks:
+      - streamflow
+    volumes:
+      - streamflow:/var/lib/rates      
+    depends_on:
+      - kafka
+    restart: on-failure
+    build:
+      context: ./sources/producers/rates/   
 #  consumer:
 #    networks:
 #      - streamflow   

@@ -1,0 +1,17 @@
+---
+version: '3'
+networks:
+  streamflow: # Kafka's network
+    external: true  
+volumes:
+  streamflow_streamflow:
+    external: true      
+services:
+  rates:
+    networks:
+      - streamflow
+    volumes:
+      - streamflow:/var/lib/rates        
+    restart: on-failure
+    build:
+      context: ./
