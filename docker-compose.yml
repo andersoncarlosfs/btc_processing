@@ -1,14 +1,14 @@
 ---
 version: '3'
 networks:
-  streamflow:
+  stream:
     driver: bridge
 volumes:
-  streamflow:    
+  stream:    
 services:
   zookeeper:
     networks:
-      - streamflow
+      - stream
     image: confluentinc/cp-zookeeper:latest
     restart: on-failure
     environment:
@@ -16,7 +16,7 @@ services:
       ZOOKEEPER_TICK_TIME: 2000
   kafka:
     networks:
-      - streamflow  
+      - stream
     image: confluentinc/cp-kafka:latest
     depends_on:
       - zookeeper
@@ -32,9 +32,9 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
   transactions:
     networks:
-      - streamflow
+      - stream
     volumes:
-      - streamflow:/var/lib/transactions      
+      - stream:/var/lib/transactions      
     depends_on:
       - kafka
     restart: on-failure
@@ -42,9 +42,9 @@ services:
       context: ./sources/producers/transactions/
   rates:
     networks:
-      - streamflow
+      - stream
     volumes:
-      - streamflow:/var/lib/rates      
+      - stream:/var/lib/rates      
     depends_on:
       - kafka
     restart: on-failure
@@ -52,9 +52,9 @@ services:
       context: ./sources/producers/rates/   
 #  consumer:
 #    networks:
-#      - streamflow   
+#      - stream  
 #    volumes:
-#      - streamflow:/var/lib/consumer       
+#      - stream:/var/lib/consumer       
 #    depends_on:
 #      - producer
 #    restart: on-failure
