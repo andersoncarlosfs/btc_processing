@@ -1,17 +1,17 @@
 ---
 version: '3'
 networks:
-  streamflow: # Kafka's network
+  stream: # Kafka's network
     external: true  
 volumes:
-  streamflow_streamflow:
+  stream:
     external: true      
 services:
   transactions:
     networks:
-      - streamflow
+      - stream
     volumes:
-      - streamflow:/var/lib/transactions        
+      - stream:/var/lib/transactions        
     restart: on-failure
     build:
       context: ./
