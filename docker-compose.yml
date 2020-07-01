@@ -4,8 +4,25 @@ networks:
   stream:
     driver: bridge
 volumes:
-  stream:    
+  stream:
 services:
+  elasticsearch:
+    networks:
+      - stream
+    volumes:
+      - stream:/usr/share/elasticsearch/data      
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.8.0
+    restart: on-failure
+    ports:
+      - 9200:9200
+      - 9300:9300
+    environment:
+      - xpack.security.enabled=false
+      - discovery.type=single-node
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
   zookeeper:
     networks:
       - stream
@@ -56,6 +73,7 @@ services:
 #    volumes:
 #      - stream:/var/lib/consumer       
 #    depends_on:
+#      - elasticsearch
 #      - producer
 #    restart: on-failure
 #    build:
