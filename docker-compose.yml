@@ -23,6 +23,17 @@ services:
       memlock:
         soft: -1
         hard: -1
+  kibana:
+    networks:
+      - stream      
+    image: docker.elastic.co/kibana/kibana:7.8.0
+    depends_on:
+      - elasticsearch    
+    restart: on-failure
+    ports:
+      - 5601:5601
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
   zookeeper:
     networks:
       - stream
