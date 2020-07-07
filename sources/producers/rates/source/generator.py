@@ -29,7 +29,10 @@ class Generator(object):
                     print("{} New rate: {} EUR".format(time["updatedISO"], rates["EUR"]["rate"]))
 
                 if self.process:
-                    self.process(json.dumps(data))
+		    self.process(json.dumps({
+                        'time': time,
+                        'bpi': rates["EUR"]
+                    }))
             else:
                 if self.logs:
                     print("Unknown chart: {}".format(data["chartName"]))                    
