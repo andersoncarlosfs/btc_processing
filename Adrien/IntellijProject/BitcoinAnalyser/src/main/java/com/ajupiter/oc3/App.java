@@ -26,6 +26,16 @@ public class App {
         builder.setBolt("index-rates", new ESIndexRatesBolt())
                 .shuffleGrouping("rates-parsing");
 
+        // (TO DO) Kafka Spout get "transactions" and index into ES
+        /*
+        KafkaSpoutConfig<String, String> spoutConfig_transaction = spoutConfigBuilder_rates.build();
+        builder.setSpout("transactions", new KafkaSpout<String, String>(spoutConfig_rates));
+        builder.setBolt("transaction-parsing", new BTCParsingBolt())
+                .shuffleGrouping("transactions");
+        builder.setBolt("index-transactions", new ESIndexeRatesBolt())
+                .shuffleGrouping("transactions-parsing");
+        */
+
         StormTopology topology = builder.createTopology();
 
         Config config = new Config();

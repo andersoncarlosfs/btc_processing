@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="5e063644-9b5a-4665-83b0-40934350a830" name="Default Changelist" comment="" />
+    <list default="true" id="5e063644-9b5a-4665-83b0-40934350a830" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/ajupiter/oc3/App.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ajupiter/oc3/App.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/ajupiter/oc3/ElasticSearchOperation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ajupiter/oc3/ElasticSearchOperation.java" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -15,10 +21,16 @@
       </list>
     </option>
   </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../../.." />
+  </component>
   <component name="ProjectId" id="1eSqqIin3luumSJ85nXUvMnX9oB" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="PropertiesComponent">
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.0" />
     <property name="project.structure.side.proportion" value="0.2" />
@@ -39,7 +51,7 @@
   <component name="RunManager">
     <configuration name="App" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.ajupiter.oc3.App" />
-      <module name="BitcoinAnalyser" />
+      <module name="oc3" />
       <extension name="coverage">
         <pattern>
           <option name="PATTERN" value="com.ajupiter.oc3.*" />
@@ -67,10 +79,25 @@
       <option name="presentableId" value="Default" />
       <updated>1594325530276</updated>
       <workItem from="1594325540825" duration="2493000" />
+      <workItem from="1594328419791" duration="71000" />
+      <workItem from="1594328503804" duration="52000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
 </project>

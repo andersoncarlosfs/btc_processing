@@ -40,7 +40,6 @@ public class ESIndexRatesBolt extends BaseRichBolt {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        System.out.println("done");
     }
 
     @Override

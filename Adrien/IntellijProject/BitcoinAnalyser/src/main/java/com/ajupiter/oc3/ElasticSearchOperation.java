@@ -5,7 +5,6 @@ import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
-import org.elasticsearch.common.xcontent.XContentType;
 
 import java.io.IOException;
 
@@ -24,25 +23,7 @@ public class ElasticSearchOperation {
 
     }
 
-    public void insert(IndexRequest myrequest) throws IOException {
-        client.index(myrequest, RequestOptions.DEFAULT);
+    public void insert(IndexRequest request) throws IOException {
+        client.index(request, RequestOptions.DEFAULT);
     }
-/*
-    public static void main(String[] s){
-        try{
-            IndexRequest request = new IndexRequest("posts");
-            request.id("1");
-            String jsonString = "{" +
-                    "\"user\":\"Hello\"," +
-                    "\"postDate\":\"2013-01-30\"," +
-                    "\"message\":\"trying out Elasticsearch\"" +
-                    "}";
-            request.source(jsonString, XContentType.JSON);
-            ElasticSearchOperation elasticSearchOperation  = new ElasticSearchOperation();
-            elasticSearchOperation.insert(request);
-        }catch(Exception e) {
-            e.printStackTrace();
-        }
-    }
-*/
 }
