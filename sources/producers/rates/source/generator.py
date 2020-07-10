@@ -19,14 +19,21 @@ class Generator(object):
         while True:
             response = request.urlopen("http://api.coindesk.com/v1/bpi/currentprice.json")     
             
-            data = json.loads(response.read())           
-                             
-            if self.logs:
-                print("{} New rate: {} EUR".format(time["updatedISO"], rates["EUR"]["rate"]))
-
-            if self.process:
-                self.process(json.dumps(data))
+            data = json.loads(response.read())
             
+            if data["chartName"] == "Bitcoin":
+                time = data["time"]    
+                rates = data["bpi"]
+                             
+                if self.logs:
+                    print("{} New rate: {} EUR".format(time["updatedISO"], rates["EUR"]["rate"]))
+
+                if self.process:
+                    self.process(json.dumps(data))
+            else:
+                if self.logs:
+                    print("Unknown chart: {}".format(data["chartName"]))                    
+
 def get_parser():
     parser = argparse.ArgumentParser(description='Data generator')
     
