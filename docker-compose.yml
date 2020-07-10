@@ -58,6 +58,39 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+  nimbus: 
+    networks:
+      - stream      
+    image: storm
+    command: storm nimbus
+    depends_on:
+      - zookeeper
+    restart: on-failure
+    ports:
+      - 6627:6627
+  supervisor:
+    networks:
+      - stream
+    image: storm
+    command: storm supervisor
+    depends_on:
+      - zookeeper        
+      - nimbus   
+    ports:
+      - 8000:8000      
+    restart: on-failure
+  ui:
+    networks:
+      - stream      
+    image: storm 
+    command: storm ui
+    depends_on:
+      - zookeeper        
+      - nimbus
+      - supervisor  
+    restart: on-failure 
+    ports:
+      - 8080:8080
   transactions:
     networks:
       - stream
