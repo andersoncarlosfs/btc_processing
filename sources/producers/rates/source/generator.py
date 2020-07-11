@@ -33,7 +33,7 @@ class Generator(object):
 
                     if self.process:
                         self.process(json.dumps({                            
-                            'timestamp': datetime.datetime.fromisoformat(time['updatedISO']).timestamp(), #'timestamp': datetime.datetime.strptime(time['updatedISO'], "%Y-%m-%dT%H:%M:%S%z").timestamp(),
+                            'timestamp': datetime.fromisoformat(time['updatedISO']).timestamp(), #'timestamp': datetime.strptime(time['updatedISO'], "%Y-%m-%dT%H:%M:%S%z").timestamp(),
                             'rate': rates["EUR"]["rate_float"]
                         }))
 
