@@ -45,23 +45,21 @@ public class RaterBolt extends BaseRichBolt {
 
     @Override
     public void execute(Tuple input) {
-         try{
+        try {
+            //
+            RaterBolt.PARSER.reset();
+
+            //
             String string = StringEscapeUtils.unescapeJava(input.getString(4));
-            JSONObject object = (JSONObject) RaterBolt.PARSER.parse(string);
-            System.out.println(string);
-         } catch (Exception e) {
-              System.out.println("dsqdqsdqsdqd");           
-         }
-        try {         
-           
-            
-            JSONObject object = (JSONObject) RaterBolt.PARSER.parse("{}");
-            System.out.println(1);
+
+            //
+            JSONObject object = (JSONObject) RaterBolt.PARSER.parse(string.substring(1, string.length() -1));
+
             //
             String time = (String) ((JSONObject) object.get("time")).get("updated");
             Double rate = (Double) ((JSONObject) ((JSONObject) object.get("bpi")).get("EUR")).get("rate_float");
-            
-            this.collector.emit(new Values(time, rate));                        
+
+            this.collector.emit(new Values(time, rate));
         } catch (Exception e) {
             System.err.println(e);
         } finally {

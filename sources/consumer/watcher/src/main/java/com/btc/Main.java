@@ -36,7 +36,7 @@ public class Main {
         // Building the topology
         builder.setSpout("rate_producer_kafka_spout", new KafkaSpout<>(rates.build()));
         builder.setBolt("rater_bolt", new RaterBolt()).shuffleGrouping("rate_producer_kafka_spout");
-        //builder.setBolt("printer_bolt", new BasicPrinterBolt()).shuffleGrouping("rater_bolt");
+        builder.setBolt("printer_bolt", new BasicPrinterBolt()).shuffleGrouping("rater_bolt");
 
         Config config = new Config();
         
