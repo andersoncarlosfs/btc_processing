@@ -51,12 +51,12 @@ public class RaterBolt extends BaseRichBolt {
 
             //
             String string = StringEscapeUtils.unescapeJava(input.getString(4));
-            System.out.println(string);
+            
             //
             JSONObject object = (JSONObject) RaterBolt.PARSER.parse(string.substring(1, string.length() -1));
 
             //
-            String time = (String) object.get("timestamp");
+            Double time = (Double) object.get("timestamp");
             Double rate = (Double) object.get("rate");
 
             this.collector.emit(new Values(time, rate));
