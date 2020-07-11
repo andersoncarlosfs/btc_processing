@@ -5,6 +5,7 @@ import argparse
 import json
 
 from urllib import request
+from datetime import datetime
 
 DEFAULT_LOGS=False
 DEFAULT_START=True
@@ -28,10 +29,13 @@ class Generator(object):
                 try:
 
                     if self.logs:
-                        print("{} New rate: {} EUR".format(time["updatedISO"], rates["EUR"]["rate"]))
+                        print("{} New rate: {} EUR".format(time["updated"], rates["EUR"]["rate"]))
 
                     if self.process:
-                        self.process(json.dumps(data))
+                        self.process(json.dumps({                            
+                            'timestamp': datetime.datetime.fromisoformat(time['updatedISO']).timestamp(), #'timestamp': datetime.datetime.strptime(time['updatedISO'], "%Y-%m-%dT%H:%M:%S%z").timestamp(),
+                            'rate': rates["EUR"]["rate_float"]
+                        }))
 
                 except Exception as e:
 
