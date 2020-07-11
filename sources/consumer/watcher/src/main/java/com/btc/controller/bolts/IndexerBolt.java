@@ -40,6 +40,6 @@ public class IndexerBolt extends BaseIndexerElasticSearchBolt {
 
     @Override
     public void prepare(Map<String, Object> topoConf, TopologyContext context, OutputCollector collector) {
-   }
-    
+    }
+
 }
