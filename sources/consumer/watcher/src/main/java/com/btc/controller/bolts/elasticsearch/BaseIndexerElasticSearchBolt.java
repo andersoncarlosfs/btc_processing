@@ -7,39 +7,15 @@ package com.btc.controller.bolts.elasticsearch;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.apache.http.HttpHost;
-import org.apache.storm.topology.base.BaseRichBolt;
 import org.apache.storm.tuple.Tuple;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.client.RequestOptions;
-import org.elasticsearch.client.RestClient;
-import org.elasticsearch.client.RestHighLevelClient;
 
 /**
  *
  * @author ?
  */
-public abstract class BaseIndexerElasticSearchBolt extends BaseRichBolt {
-
-    /**
-     * 
-     */
-    private static RestHighLevelClient CLIENT;
-
-    static {
-        try {
-            BaseIndexerElasticSearchBolt.CLIENT = new RestHighLevelClient(
-                    RestClient.builder(
-                            new HttpHost("localhost", 9200, "http"),
-                            new HttpHost("localhost", 9201, "http")
-                    )
-            );
-        } catch (Exception e) {
-            System.err.println(e);
-        }
-    }
+public abstract class BaseIndexerElasticSearchBolt extends AbstractBaseElasticSearchBolt {
     
     /**
      * 
@@ -48,7 +24,7 @@ public abstract class BaseIndexerElasticSearchBolt extends BaseRichBolt {
     @Override
     public void execute(Tuple tuple) {
         try {
-            BaseIndexerElasticSearchBolt.CLIENT.index(
+            AbstractBaseElasticSearchBolt.CLIENT.index(
                     new IndexRequest(this.getTable()).source(this.toMap(tuple)), 
                     RequestOptions.DEFAULT
             );
@@ -57,17 +33,4 @@ public abstract class BaseIndexerElasticSearchBolt extends BaseRichBolt {
         }
     }  
     
-    /**
-     * 
-     * @return 
-     */
-    public abstract String getTable();
-    
-    /**
-     * 
-     * @param tuple
-     * @return 
-     */
-    public abstract Map<String, Object> toMap(Tuple tuple);
-
 }
