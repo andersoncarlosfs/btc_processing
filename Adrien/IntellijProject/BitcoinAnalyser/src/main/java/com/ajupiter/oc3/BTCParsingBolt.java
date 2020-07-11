@@ -47,7 +47,7 @@ public class BTCParsingBolt extends BaseRichBolt {
             JSONObject eur_obj = (JSONObject) bpi_obj.get("EUR");
             Double euro_rate = (Double) eur_obj.get("rate_float");
 
-            // System.out.println(time_uk + ": " + euro_rate + " euro");
+            System.out.println(time_uk + ": " + euro_rate + " euro");
 
             outputCollector.emit(new Values(time_uk, euro_rate));
             outputCollector.ack(input);

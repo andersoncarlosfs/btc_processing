@@ -2,11 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5e063644-9b5a-4665-83b0-40934350a830" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/ajupiter/oc3/App.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ajupiter/oc3/App.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/ajupiter/oc3/ElasticSearchOperation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ajupiter/oc3/ElasticSearchOperation.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/ajupiter/oc3/BTCParsingBolt.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ajupiter/oc3/BTCParsingBolt.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/ajupiter/oc3/ESIndexRatesBolt.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ajupiter/oc3/ESIndexRatesBolt.java" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -80,7 +79,8 @@
       <updated>1594325530276</updated>
       <workItem from="1594325540825" duration="2493000" />
       <workItem from="1594328419791" duration="71000" />
-      <workItem from="1594328503804" duration="52000" />
+      <workItem from="1594328503804" duration="376000" />
+      <workItem from="1594381057384" duration="5782000" />
     </task>
     <servers />
   </component>
