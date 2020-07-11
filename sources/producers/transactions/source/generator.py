@@ -48,16 +48,22 @@ class Generator(object):
                     # divide by 10**8 to obtain the value in bitcoins.
                     transaction_total_amount += recipient["value"] / 100000000.
 
-                if self.logs:
-                    print("{} New transaction {}: {} BTC".format(transaction_timestamp, transaction_hash, transaction_total_amount))
+                try:
 
-                if self.process:
-                    self.process(json.dumps({
-                        'timestamp': transaction_timestamp,
-                        'hash': transaction_hash,
-                        'total_amount': transaction_total_amount
-                    }))
+                    if self.logs:
+                        print("{} New transaction {}: {} BTC".format(transaction_timestamp, transaction_hash, transaction_total_amount))
 
+                    if self.process:
+                        self.process(json.dumps({
+                            'timestamp': transaction_timestamp,
+                            'hash': transaction_hash,
+                            'total_amount': transaction_total_amount
+                        }))
+
+                except Exception as e:
+
+                    if self.logs:
+                        print("Error: {} ".format(e))
 
             # New block
             elif data["op"] == "block":
@@ -66,15 +72,19 @@ class Generator(object):
                 block_found_by = data["x"]["foundBy"]["description"]
                 block_reward = 12.5 # blocks mined in 2016 have an associated reward of 12.5 BTC
 
-                if self.logs:
-                    print("{} New block {} found by {}".format(block_timestamp, block_hash, block_found_by))
+                try:
+                    if self.logs:
+                        print("{} New block {} found by {}".format(block_timestamp, block_hash, block_found_by))
 
-                if self.process:
-                    self.process(json.dumps({
-                        'timestamp': block_timestamp,
-                        'hash': block_hash,
-                        'found_by': block_found_by
-                    }))                    
+                    if self.process:
+                        self.process(json.dumps({
+                            'timestamp': block_timestamp,
+                            'hash': block_hash,
+                            'found_by': block_found_by
+                        }))  
+                except Exception as e:
+                    if self.logs:
+                        print("Error: {} ".format(e))               
 
             # This really should never happen
             else:

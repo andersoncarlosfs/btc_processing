@@ -24,12 +24,19 @@ class Generator(object):
             if data["chartName"] == "Bitcoin":
                 time = data["time"]    
                 rates = data["bpi"]
-                             
-                if self.logs:
-                    print("{} New rate: {} EUR".format(time["updatedISO"], rates["EUR"]["rate"]))
+                
+                try:
 
-                if self.process:
-                    self.process(json.dumps(data))
+                    if self.logs:
+                        print("{} New rate: {} EUR".format(time["updatedISO"], rates["EUR"]["rate"]))
+
+                    if self.process:
+                        self.process(json.dumps(data))
+
+                except Exception as e:
+
+                    if self.logs:
+                        print("Error: {} ".format(e))
             else:
                 if self.logs:
                     print("Unknown chart: {}".format(data["chartName"]))                    
