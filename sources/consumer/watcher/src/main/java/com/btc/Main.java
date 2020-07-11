@@ -5,8 +5,8 @@
  */
 package com.btc;
 
+import com.btc.controller.bolts.RaterBolt;
 import com.btc.controller.bolts.printers.BasicPrinterBolt;
-import com.btc.controller.bolts.printers.JSONPrinterBolt;
 import org.apache.storm.Config;
 import org.apache.storm.LocalCluster;
 import org.apache.storm.StormSubmitter;
@@ -34,8 +34,9 @@ public class Main {
         KafkaSpoutConfig.Builder<String, String> rates = KafkaSpoutConfig.builder("localhost:9092", "rates");
 
         // Building the topology
-        builder.setSpout("rates", new KafkaSpout<>(rates.build()));
-        builder.setBolt("printer", new BasicPrinterBolt()).shuffleGrouping("rates");
+        builder.setSpout("rate_producer_kafka_spout", new KafkaSpout<>(rates.build()));
+        builder.setBolt("rater_bolt", new RaterBolt()).shuffleGrouping("rate_producer_kafka_spout");
+        //builder.setBolt("printer_bolt", new BasicPrinterBolt()).shuffleGrouping("rater_bolt");
 
         Config config = new Config();
         

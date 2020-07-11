@@ -17,6 +17,8 @@ import org.apache.storm.tuple.Tuple;
  */
 public class JSONPrinterBolt extends BaseBasicBolt{
 
+    private static final JSONParser PARSER = new JSONParser();
+    
     @Override
     public void declareOutputFields(OutputFieldsDeclarer declarer) {
         System.out.println(declarer);
@@ -24,13 +26,11 @@ public class JSONPrinterBolt extends BaseBasicBolt{
 
     @Override
     public void execute(Tuple input, BasicOutputCollector collector) {
-        JSONParser parser = new JSONParser();
-        
-        System.out.print(1);
-        System.out.println(input);
-        System.out.print(2);
-        System.out.println(input.getValues());
-        
+        try {
+            System.out.println(PARSER.parse(input.getString(4)));
+        } catch (Exception exception) {
+            System.out.println(exception);
+        }       
     }
     
 }
