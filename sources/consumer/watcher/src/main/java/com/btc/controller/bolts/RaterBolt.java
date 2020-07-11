@@ -35,7 +35,7 @@ public class RaterBolt extends BaseRichBolt {
 
     @Override
     public void declareOutputFields(OutputFieldsDeclarer declarer) {
-        declarer.declare(new Fields("time", "rate"));
+        declarer.declare(new Fields("timestamp", "rate"));
     }
 
     @Override
@@ -51,13 +51,13 @@ public class RaterBolt extends BaseRichBolt {
 
             //
             String string = StringEscapeUtils.unescapeJava(input.getString(4));
-
+            System.out.println(string);
             //
             JSONObject object = (JSONObject) RaterBolt.PARSER.parse(string.substring(1, string.length() -1));
 
             //
-            String time = (String) ((JSONObject) object.get("time")).get("updated");
-            Double rate = (Double) ((JSONObject) ((JSONObject) object.get("bpi")).get("EUR")).get("rate_float");
+            String time = (String) object.get("timestamp");
+            Double rate = (Double) object.get("rate");
 
             this.collector.emit(new Values(time, rate));
         } catch (Exception e) {
