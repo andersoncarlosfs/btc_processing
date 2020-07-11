@@ -5,6 +5,7 @@
  */
 package com.btc;
 
+import com.btc.controller.bolts.IndexerBolt;
 import com.btc.controller.bolts.RaterBolt;
 import com.btc.controller.bolts.printers.BasicPrinterBolt;
 import org.apache.storm.Config;
@@ -36,6 +37,7 @@ public class Main {
         // Building the topology
         builder.setSpout("rate_producer_kafka_spout", new KafkaSpout<>(rates.build()));
         builder.setBolt("rater_bolt", new RaterBolt()).shuffleGrouping("rate_producer_kafka_spout");
+        builder.setBolt("indexer_elasticsearch_bolt", new IndexerBolt()).shuffleGrouping("rater_bolt");
         builder.setBolt("printer_bolt", new BasicPrinterBolt()).shuffleGrouping("rater_bolt");
 
         Config config = new Config();
