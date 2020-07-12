@@ -28,7 +28,7 @@ public class IndexerBolt extends BaseIndexerElasticSearchBolt {
     public Map<String, Object> toMap(Tuple tuple) {
         Map<String, Object> map = new HashMap<>();
         
-        map.put("timestamp", tuple.getDoubleByField("timestamp"));
+        map.put("timestamp", tuple.getStringByField("timestamp"));
         map.put("rate", tuple.getDoubleByField("rate"));
         
         return map;
