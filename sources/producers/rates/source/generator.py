@@ -18,15 +18,14 @@ class Generator(object):
         
     def start(self):
         while True:
-            response = request.urlopen("http://api.coindesk.com/v1/bpi/currentprice.json")     
-            
-            data = json.loads(response.read())
-            
-            if data["chartName"] == "Bitcoin":
-                time = data["time"]    
-                rates = data["bpi"]
-                
-                try:
+            try:
+                response = request.urlopen("http://api.coindesk.com/v1/bpi/currentprice.json")     
+
+                data = json.loads(response.read())
+
+                if data["chartName"] == "Bitcoin":
+                    time = data["time"]    
+                    rates = data["bpi"]
 
                     if self.logs:
                         print("{} New rate: {} EUR".format(time["updated"], rates["EUR"]["rate"]))
@@ -36,14 +35,14 @@ class Generator(object):
                             'timestamp': datetime.fromisoformat(time['updatedISO']).timestamp(), #'timestamp': datetime.strptime(time['updatedISO'], "%Y-%m-%dT%H:%M:%S%z").timestamp(),
                             'rate': rates["EUR"]["rate_float"]
                         }))
-
-                except Exception as e:
-
+            
+                else:
                     if self.logs:
-                        print("Error: {} ".format(e))
-            else:
+                        print("Unknown chart: {}".format(data["chartName"]))  
+
+            except Exception as e:
                 if self.logs:
-                    print("Unknown chart: {}".format(data["chartName"]))                    
+                    print("Error: {} ".format(e))                  
 
 def get_parser():
     parser = argparse.ArgumentParser(description='Data generator')
