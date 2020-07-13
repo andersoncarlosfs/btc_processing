@@ -5,12 +5,13 @@
  */
 package com.btc;
 
-import com.btc.controller.bolts.IndexerBolt;
-import com.btc.controller.bolts.RaterBolt;
-import com.btc.controller.bolts.printers.BasicPrinterBolt;
+import com.btc.controller.bolts.TransformerBolt;
+import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.storm.Config;
 import org.apache.storm.LocalCluster;
 import org.apache.storm.StormSubmitter;
+import org.apache.storm.elasticsearch.bolt.EsIndexBolt;
+import org.apache.storm.elasticsearch.common.EsConfig;
 import org.apache.storm.generated.AlreadyAliveException;
 import org.apache.storm.generated.AuthorizationException;
 import org.apache.storm.generated.InvalidTopologyException;
@@ -25,25 +26,31 @@ import org.apache.storm.topology.TopologyBuilder;
 public class Main {
 
     /**
-     * 
+     *
      * @param args the command line arguments
      */
     public static void main(String[] args) throws AlreadyAliveException, InvalidTopologyException, AuthorizationException, Exception {
+        // Building the topology
         TopologyBuilder builder = new TopologyBuilder();
 
         // Defining the spouts Configuration
-        KafkaSpoutConfig.Builder<String, String> rates = KafkaSpoutConfig.builder("localhost:9092", "rates");
+        // Kafka
+        KafkaSpoutConfig.Builder<String, String> kafkaConfing = KafkaSpoutConfig.builder("localhost:9092", "rates");
+        kafkaConfing.setProp(ConsumerConfig.GROUP_ID_CONFIG,  "rates");
+        builder.setSpout("rates_kafka_spout", new KafkaSpout<>(kafkaConfing.build()));
+        
+        // Transformer
+        builder.setBolt("rates_transformer_spout", new TransformerBolt()).shuffleGrouping("rates_transformer_spout");
+        
+        // ElasticSearch         
+        EsConfig elasticSearchConfig= new EsConfig();
+        builder.setBolt("index_elasticsearch_bolt", new EsIndexBolt(elasticSearchConfig)).shuffleGrouping("rates_transformer_spout");
 
-        // Building the topology
-        builder.setSpout("rate_producer_kafka_spout", new KafkaSpout<>(rates.build()));
-        builder.setBolt("rater_bolt", new RaterBolt()).shuffleGrouping("rate_producer_kafka_spout");
-        builder.setBolt("indexer_elasticsearch_bolt", new IndexerBolt()).shuffleGrouping("rater_bolt");
-        builder.setBolt("printer_bolt", new BasicPrinterBolt()).shuffleGrouping("rater_bolt");
-
+        // Configuring the topology
         Config config = new Config();
-        
+
         String name = "btc";
-        
+
         if (args.length > 0 && args[0].equals("remote")) {
             StormSubmitter.submitTopology(name, config, builder.createTopology());
         } else {
