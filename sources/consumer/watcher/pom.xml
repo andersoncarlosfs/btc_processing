@@ -5,11 +5,17 @@
     <artifactId>watcher</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+    </properties>
     <dependencies>
         <dependency>
             <groupId>org.apache.storm</groupId>
-            <artifactId>storm-core</artifactId>
+            <artifactId>storm-core</artifactId>            
             <version>2.2.0</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.storm</groupId>
@@ -27,9 +33,21 @@
             <version>7.8.0</version>
         </dependency>
     </dependencies>
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-    </properties>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.2.4</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>    
 </project>

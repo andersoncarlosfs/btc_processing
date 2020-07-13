@@ -44,12 +44,7 @@ public class Main {
         
         String name = "btc";
         
-        if (args.length > 0 && args[0].equals("remote")) {
-            StormSubmitter.submitTopology(name, config, builder.createTopology());
-        } else {
-            LocalCluster cluster = new LocalCluster();
-            cluster.submitTopology(name, config, builder.createTopology());
-        }
+        StormSubmitter.submitTopology(name, config, builder.createTopology());
     }
 
 }

@@ -111,14 +111,16 @@ services:
     restart: on-failure
     build:
       context: ./sources/producers/rates/   
-#  consumer:
-#    networks:
-#      - stream  
-#    volumes:
-#      - stream:/var/lib/consumer       
-#    depends_on:
-#      - elasticsearch
-#      - producer
-#    restart: on-failure
-#    build:
-#      context: ./sources/consumer
+  watcher:
+    networks:
+      - stream  
+    volumes:
+      - stream:/var/lib/consumer       
+    depends_on:
+      - elasticsearch
+      - supervisor
+      - transactions
+      - rates
+    restart: on-failure
+    build:
+      context: ./sources/consumer
