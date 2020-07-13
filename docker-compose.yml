@@ -115,12 +115,12 @@ services:
     networks:
       - stream  
     volumes:
-      - stream:/var/lib/watcher       
+      - ./sources/consumer/watcher:/var/lib/watcher  
+    image: storm 
+    command: storm jar /var/lib/watcher/target/watcher-1.0-SNAPSHOT.jar com.btc.Main
     depends_on:
       - elasticsearch
       - supervisor
       - transactions
       - rates
     restart: on-failure
-    build:
-      context: ./sources/consumer

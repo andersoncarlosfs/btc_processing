@@ -33,16 +33,30 @@ public class RaterBolt extends BaseRichBolt {
      */
     private OutputCollector collector;
 
+    /**
+     * 
+     * @param declarer 
+     */
     @Override
     public void declareOutputFields(OutputFieldsDeclarer declarer) {
         declarer.declare(new Fields("timestamp", "rate"));
     }
 
+    /**
+     * 
+     * @param topoConf
+     * @param context
+     * @param collector 
+     */
     @Override
     public void prepare(Map<String, Object> topoConf, TopologyContext context, OutputCollector collector) {
         this.collector = collector;
     }
 
+    /**
+     * 
+     * @param input 
+     */
     @Override
     public void execute(Tuple input) {
         try {

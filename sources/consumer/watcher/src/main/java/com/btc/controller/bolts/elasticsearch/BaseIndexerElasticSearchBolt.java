@@ -6,7 +6,6 @@
 package com.btc.controller.bolts.elasticsearch;
 
 import java.io.IOException;
-import java.util.Map;
 import org.apache.storm.tuple.Tuple;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.client.RequestOptions;
@@ -22,7 +21,7 @@ public abstract class BaseIndexerElasticSearchBolt extends AbstractBaseElasticSe
      * @param tuple 
      */
     @Override
-    public void execute(Tuple tuple) {
+    public void process(Tuple tuple) {
         try {
             AbstractBaseElasticSearchBolt.CLIENT.index(
                     new IndexRequest(this.getTable()).source(this.toMap(tuple)), 
