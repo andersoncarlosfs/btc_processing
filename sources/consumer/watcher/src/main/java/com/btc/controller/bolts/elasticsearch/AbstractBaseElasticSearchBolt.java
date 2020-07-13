@@ -7,8 +7,6 @@ package com.btc.controller.bolts.elasticsearch;
 
 import java.util.Map;
 import org.apache.http.HttpHost;
-import org.apache.storm.task.OutputCollector;
-import org.apache.storm.task.TopologyContext;
 import org.apache.storm.topology.base.BaseRichBolt;
 import org.apache.storm.tuple.Tuple;
 import org.elasticsearch.client.RestClient;
@@ -20,15 +18,7 @@ import org.elasticsearch.client.RestHighLevelClient;
  */
 public abstract class AbstractBaseElasticSearchBolt extends BaseRichBolt {
 
-    /**
-     *
-     */
     protected static RestHighLevelClient CLIENT;
-
-    /**
-     *
-     */
-    private OutputCollector collector;
 
     static {
         try {
@@ -55,37 +45,5 @@ public abstract class AbstractBaseElasticSearchBolt extends BaseRichBolt {
      * @return
      */
     public abstract Map<String, Object> toMap(Tuple tuple);
-
-    /**
-     *
-     * @param tuple
-     */
-    public abstract void process(Tuple tuple);
-
-    /**
-     *
-     * @param topoConf
-     * @param context
-     * @param collector
-     */
-    @Override
-    public void prepare(Map<String, Object> topoConf, TopologyContext context, OutputCollector collector) {
-        this.collector = collector;
-    }
-
-    /**
-     *
-     * @param input
-     */
-    @Override
-    public void execute(Tuple input) {
-        try {
-            process(input);
-        } catch (Exception e) {
-            System.err.println(e);
-        } finally {
-            this.collector.ack(input);
-        } 
-    }
 
 }

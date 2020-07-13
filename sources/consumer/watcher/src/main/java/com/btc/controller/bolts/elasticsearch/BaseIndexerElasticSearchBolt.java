@@ -6,6 +6,9 @@
 package com.btc.controller.bolts.elasticsearch;
 
 import java.io.IOException;
+import java.util.Map;
+import org.apache.storm.task.OutputCollector;
+import org.apache.storm.task.TopologyContext;
 import org.apache.storm.tuple.Tuple;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.client.RequestOptions;
@@ -15,21 +18,39 @@ import org.elasticsearch.client.RequestOptions;
  * @author ?
  */
 public abstract class BaseIndexerElasticSearchBolt extends AbstractBaseElasticSearchBolt {
-    
+
     /**
-     * 
-     * @param tuple 
+     *
+     */
+    private OutputCollector collector;
+
+    /**
+     *
+     * @param topoConf
+     * @param context
+     * @param collector
      */
     @Override
-    public void process(Tuple tuple) {
+    public void prepare(Map<String, Object> topoConf, TopologyContext context, OutputCollector collector) {
+        this.collector = collector;
+    }
+
+    /**
+     *
+     * @param tuple
+     */
+    @Override
+    public void execute(Tuple input) {
         try {
             AbstractBaseElasticSearchBolt.CLIENT.index(
-                    new IndexRequest(this.getTable()).source(this.toMap(tuple)), 
+                    new IndexRequest(this.getTable()).source(this.toMap(input)),
                     RequestOptions.DEFAULT
             );
         } catch (IOException e) {
             System.err.println(e);
+        } finally {
+            this.collector.ack(input);
         }
-    }  
-    
+    }
+
 }
