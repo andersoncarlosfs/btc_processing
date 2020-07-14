@@ -95,21 +95,24 @@ public class ConverterBolt extends AbstractEsBolt {
      */
     @Override
     public void process(Tuple tuple) {
-        try {
-            ConverterBolt.PARSER.reset();
-            
-            String string = StringEscapeUtils.unescapeJava(tuple.getString(4));
-    
-            JSONObject object = (JSONObject) ConverterBolt.PARSER.parse(string.substring(1, string.length() -1));
-            
+        try {                       
             if (tuple.getSourceComponent().equals("rates_kafka_spout")) {
+                
+                ConverterBolt.PARSER.reset();
+            
+                String string = StringEscapeUtils.unescapeJava(tuple.getString(4));
+    
+                JSONObject object = (JSONObject) ConverterBolt.PARSER.parse(string.substring(1, string.length() -1));
+                
                 this.time = (String) object.get("timestamp");
                 this.euro = (Double) object.get("rate");
+                
             } else if (
                     this.euro != null && 
-                    tuple.getSourceComponent().equals("transactions_kafka_spout") &&
-                    object.containsKey("total_amount")
+                    tuple.getSourceComponent().equals("objects_elasticsearch_bolt")
                     ) {
+                
+                JSONObject object = (JSONObject) tuple.getValueByField("source");
                 
                 object.put("timestamp", this.time);
                 object.put("euro", ((Double) object.get("total_amount")) * this.euro);

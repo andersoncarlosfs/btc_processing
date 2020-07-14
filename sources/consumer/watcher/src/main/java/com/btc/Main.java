@@ -7,6 +7,7 @@ package com.btc;
 
 import com.btc.controller.bolts.ConverterBolt;
 import com.btc.controller.bolts.IndexerBolt;
+import com.btc.controller.bolts.SplitterBolt;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.storm.Config;
 import org.apache.storm.LocalCluster;
@@ -48,10 +49,13 @@ public class Main {
         kafkaConfigTransactions.setProp(ConsumerConfig.GROUP_ID_CONFIG, "transactions");
         builder.setSpout("transactions_kafka_spout", new KafkaSpout<>(kafkaConfigTransactions.build()));
 
+        // Splitter
+        builder.setBolt("objects_elasticsearch_bolt", new SplitterBolt()).shuffleGrouping("transactions_kafka_spout");
+        
         // ElasticSearch         
         builder
                 .setBolt("transactions_elasticsearch_bolt", new ConverterBolt("transactions"))
-                .shuffleGrouping("transactions_kafka_spout")
+                .shuffleGrouping("objects_elasticsearch_bolt", "transactions")
                 .shuffleGrouping("rates_kafka_spout");
         
         // Configuring the topology
