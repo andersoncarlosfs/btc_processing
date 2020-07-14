@@ -5,6 +5,7 @@
  */
 package com.btc;
 
+import com.btc.controller.bolts.ConverterBolt;
 import com.btc.controller.bolts.IndexerBolt;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.storm.Config;
@@ -48,7 +49,10 @@ public class Main {
         builder.setSpout("transactions_kafka_spout", new KafkaSpout<>(kafkaConfigTransactions.build()));
 
         // ElasticSearch         
-        builder.setBolt("transactions_elasticsearch_bolt", new IndexerBolt("transactions")).shuffleGrouping("transactions_kafka_spout");
+        builder
+                .setBolt("transactions_elasticsearch_bolt", new ConverterBolt("transactions"))
+                .shuffleGrouping("transactions_kafka_spout")
+                .shuffleGrouping("rates_kafka_spout");
         
         // Configuring the topology
         Config config = new Config();
