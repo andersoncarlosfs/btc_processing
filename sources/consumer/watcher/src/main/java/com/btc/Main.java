@@ -64,7 +64,7 @@ public class Main {
         
         // ElasticSearch         
         builder
-                .setBolt("rates_elasticsearch_bolt", new IndexerBolt())
+                .setBolt("objects_elasticsearch_bolt", new IndexerBolt())
                 .shuffleGrouping("objects_storm_bolt", "rates")
                 .shuffleGrouping("transactions_storm_bolt", "blocks")
                 .shuffleGrouping("convertions_storm_bolt", "transactions");
