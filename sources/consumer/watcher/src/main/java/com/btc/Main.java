@@ -5,13 +5,11 @@
  */
 package com.btc;
 
-import com.btc.controller.bolts.TransformerBolt;
+import com.btc.controller.bolts.IndexerBolt;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.storm.Config;
 import org.apache.storm.LocalCluster;
 import org.apache.storm.StormSubmitter;
-import org.apache.storm.elasticsearch.bolt.EsIndexBolt;
-import org.apache.storm.elasticsearch.common.EsConfig;
 import org.apache.storm.generated.AlreadyAliveException;
 import org.apache.storm.generated.AuthorizationException;
 import org.apache.storm.generated.InvalidTopologyException;
@@ -36,15 +34,11 @@ public class Main {
         // Defining the spouts Configuration
         // Kafka
         KafkaSpoutConfig.Builder<String, String> kafkaConfing = KafkaSpoutConfig.builder("localhost:9092", "rates");
-        kafkaConfing.setProp(ConsumerConfig.GROUP_ID_CONFIG,  "rates");
+        kafkaConfing.setProp(ConsumerConfig.GROUP_ID_CONFIG, "rates");
         builder.setSpout("rates_kafka_spout", new KafkaSpout<>(kafkaConfing.build()));
-        
-        // Transformer
-        builder.setBolt("rates_transformer_spout", new TransformerBolt()).shuffleGrouping("rates_transformer_spout");
-        
+
         // ElasticSearch         
-        EsConfig elasticSearchConfig= new EsConfig();
-        builder.setBolt("index_elasticsearch_bolt", new EsIndexBolt(elasticSearchConfig)).shuffleGrouping("rates_transformer_spout");
+        builder.setBolt("index_elasticsearch_bolt", new IndexerBolt()).shuffleGrouping("rates_kafka_spout");
 
         // Configuring the topology
         Config config = new Config();

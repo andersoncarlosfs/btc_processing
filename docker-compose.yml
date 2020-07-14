@@ -115,9 +115,9 @@ services:
     networks:
       - stream  
     volumes:
-      - ./sources/consumer/watcher:/var/lib/watcher  
+      - ./sources/consumer/watcher:/usr/src/app/watcher  
     image: storm 
-    command: storm jar /var/lib/watcher/target/watcher-1.0-SNAPSHOT.jar com.btc.Main
+    command: storm jar /usr/src/app/watcher/target/watcher-1.0-SNAPSHOT.jar com.btc.Main
     depends_on:
       - elasticsearch
       - supervisor
