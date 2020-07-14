@@ -6,7 +6,6 @@
 package com.btc.controller.bolts;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import static java.util.Objects.requireNonNull;
 import org.apache.commons.lang.StringEscapeUtils;
@@ -28,31 +27,42 @@ public class IndexerBolt extends AbstractEsBolt {
     /**
      * 
      */
+    private final String index;
+    
+    /**
+     * 
+     */
     private final EsTupleMapper tupleMapper;
 
     /**
      * EsIndexBolt constructor.     
+     * @param index
      */
-    public IndexerBolt() {
-        this(new EsConfig(), new DefaultEsTupleMapper());
+    public IndexerBolt(String index) {
+        this(index, new EsConfig(), new DefaultEsTupleMapper());
     }
     
     
     /**
      * EsIndexBolt constructor.
+     * @param index
      * @param esConfig Elasticsearch configuration containing node addresses {@link EsConfig}
      */
-    public IndexerBolt(EsConfig esConfig) {
-        this(esConfig, new DefaultEsTupleMapper());
+    public IndexerBolt(String index, EsConfig esConfig) {
+        this(index, esConfig, new DefaultEsTupleMapper());
     }
     
     /**
      * EsIndexBolt constructor.
+     * @param index
      * @param esConfig Elasticsearch configuration containing node addresses {@link EsConfig}
      * @param tupleMapper Tuple to ES document mapper {@link EsTupleMapper}
      */
-    public IndexerBolt(EsConfig esConfig, EsTupleMapper tupleMapper) {
+    public IndexerBolt(String index, EsConfig esConfig, EsTupleMapper tupleMapper) {
         super(esConfig);
+        
+        this.index = index;
+        
         this.tupleMapper = requireNonNull(tupleMapper);
     }
 
@@ -72,7 +82,7 @@ public class IndexerBolt extends AbstractEsBolt {
             
             client.performRequest(
                     "post", 
-                    "/rates/_doc/", 
+                    "/" + index + "/_doc/", 
                     Collections.EMPTY_MAP, 
                     new StringEntity(string.substring(1, string.length() - 1), ContentType.APPLICATION_JSON)
             );

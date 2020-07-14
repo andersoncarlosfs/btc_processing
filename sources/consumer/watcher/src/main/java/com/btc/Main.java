@@ -32,14 +32,24 @@ public class Main {
         TopologyBuilder builder = new TopologyBuilder();
 
         // Defining the spouts Configuration
+        // Rates
         // Kafka
-        KafkaSpoutConfig.Builder<String, String> kafkaConfing = KafkaSpoutConfig.builder("localhost:9092", "rates");
-        kafkaConfing.setProp(ConsumerConfig.GROUP_ID_CONFIG, "rates");
-        builder.setSpout("rates_kafka_spout", new KafkaSpout<>(kafkaConfing.build()));
+        KafkaSpoutConfig.Builder<String, String> kafkaConfingRates = KafkaSpoutConfig.builder("localhost:9092", "rates");
+        kafkaConfingRates.setProp(ConsumerConfig.GROUP_ID_CONFIG, "rates");
+        builder.setSpout("rates_kafka_spout", new KafkaSpout<>(kafkaConfingRates.build()));
 
         // ElasticSearch         
-        builder.setBolt("index_elasticsearch_bolt", new IndexerBolt()).shuffleGrouping("rates_kafka_spout");
+        builder.setBolt("index_elasticsearch_bolt", new IndexerBolt("rates")).shuffleGrouping("rates_kafka_spout");
+        
+        // Transactions
+        // Kafka
+        KafkaSpoutConfig.Builder<String, String> kafkaConfigTransactions = KafkaSpoutConfig.builder("localhost:9092", "transactions");
+        kafkaConfigTransactions.setProp(ConsumerConfig.GROUP_ID_CONFIG, "transactions");
+        builder.setSpout("transactions_kafka_spout", new KafkaSpout<>(kafkaConfigTransactions.build()));
 
+        // ElasticSearch         
+        builder.setBolt("index_elasticsearch_bolt", new IndexerBolt("transactions")).shuffleGrouping("transactions_kafka_spout");
+        
         // Configuring the topology
         Config config = new Config();
 
