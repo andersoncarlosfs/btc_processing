@@ -8,6 +8,7 @@ package com.btc;
 import com.btc.controller.bolts.ConverterBolt;
 import com.btc.controller.bolts.IndexerBolt;
 import com.btc.controller.bolts.SplitterBolt;
+import com.btc.controller.bolts.TransformerBolt;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.storm.Config;
 import org.apache.storm.LocalCluster;
@@ -33,30 +34,40 @@ public class Main {
         // Building the topology
         TopologyBuilder builder = new TopologyBuilder();
 
-        // Defining the spouts Configuration
-        // Rates
-        // Kafka
+        // Defining the spouts Configuration        
+        // Kafka (Rates) [Spout]
         KafkaSpoutConfig.Builder<String, String> kafkaConfingRates = KafkaSpoutConfig.builder("localhost:9092", "rates");
         kafkaConfingRates.setProp(ConsumerConfig.GROUP_ID_CONFIG, "rates");
-        builder.setSpout("rates_kafka_spout", new KafkaSpout<>(kafkaConfingRates.build()));
-
-        // ElasticSearch         
-        builder.setBolt("rates_elasticsearch_bolt", new IndexerBolt("rates")).shuffleGrouping("rates_kafka_spout");
+        builder.setSpout("rates", new KafkaSpout<>(kafkaConfingRates.build()));
         
-        // Transactions
-        // Kafka
+        // Kafka (Transactions) [Spout]
         KafkaSpoutConfig.Builder<String, String> kafkaConfigTransactions = KafkaSpoutConfig.builder("localhost:9092", "transactions");
         kafkaConfigTransactions.setProp(ConsumerConfig.GROUP_ID_CONFIG, "transactions");
-        builder.setSpout("transactions_kafka_spout", new KafkaSpout<>(kafkaConfigTransactions.build()));
+        builder.setSpout("transactions", new KafkaSpout<>(kafkaConfigTransactions.build()));
 
+        // Transformer
+        builder
+                .setBolt("objects_storm_bolt", new TransformerBolt())
+                .shuffleGrouping("rates")
+                .shuffleGrouping("transactions");
+        
         // Splitter
-        builder.setBolt("objects_elasticsearch_bolt", new SplitterBolt()).shuffleGrouping("transactions_kafka_spout");
+        builder
+                .setBolt("transactions_storm_bolt", new SplitterBolt())
+                .shuffleGrouping("objects_storm_bolt", "transactions");        
+        
+        // Converter         
+        builder
+                .setBolt("convertions_storm_bolt", new ConverterBolt())
+                .shuffleGrouping("objects_storm_bolt", "rates")
+                .shuffleGrouping("transactions_storm_bolt", "transactions");        
         
         // ElasticSearch         
         builder
-                .setBolt("transactions_elasticsearch_bolt", new ConverterBolt("transactions"))
-                .shuffleGrouping("objects_elasticsearch_bolt", "transactions")
-                .shuffleGrouping("rates_kafka_spout");
+                .setBolt("rates_elasticsearch_bolt", new IndexerBolt())
+                .shuffleGrouping("objects_storm_bolt", "rates")
+                .shuffleGrouping("transactions_storm_bolt", "blocks")
+                .shuffleGrouping("convertions_storm_bolt", "transactions");
         
         // Configuring the topology
         Config config = new Config();

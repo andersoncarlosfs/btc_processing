@@ -14,7 +14,7 @@ import org.apache.storm.elasticsearch.bolt.AbstractEsBolt;
 import org.apache.storm.elasticsearch.common.DefaultEsTupleMapper;
 import org.apache.storm.elasticsearch.common.EsConfig;
 import org.apache.storm.elasticsearch.common.EsTupleMapper;
-import org.apache.storm.shade.org.apache.commons.lang.StringEscapeUtils;
+import org.apache.storm.shade.org.json.simple.JSONObject;
 import org.apache.storm.task.OutputCollector;
 import org.apache.storm.task.TopologyContext;
 import org.apache.storm.tuple.Tuple;
@@ -27,42 +27,31 @@ public class IndexerBolt extends AbstractEsBolt {
     /**
      * 
      */
-    private final String index;
-    
-    /**
-     * 
-     */
     private final EsTupleMapper tupleMapper;
 
     /**
      * EsIndexBolt constructor.     
-     * @param index
      */
-    public IndexerBolt(String index) {
-        this(index, new EsConfig(), new DefaultEsTupleMapper());
+    public IndexerBolt() {
+        this(new EsConfig(), new DefaultEsTupleMapper());
     }
     
     
     /**
      * EsIndexBolt constructor.
-     * @param index
      * @param esConfig Elasticsearch configuration containing node addresses {@link EsConfig}
      */
-    public IndexerBolt(String index, EsConfig esConfig) {
-        this(index, esConfig, new DefaultEsTupleMapper());
+    public IndexerBolt(EsConfig esConfig) {
+        this(esConfig, new DefaultEsTupleMapper());
     }
     
     /**
      * EsIndexBolt constructor.
-     * @param index
      * @param esConfig Elasticsearch configuration containing node addresses {@link EsConfig}
      * @param tupleMapper Tuple to ES document mapper {@link EsTupleMapper}
      */
-    public IndexerBolt(String index, EsConfig esConfig, EsTupleMapper tupleMapper) {
+    public IndexerBolt(EsConfig esConfig, EsTupleMapper tupleMapper) {
         super(esConfig);
-        
-        this.index = index;
-        
         this.tupleMapper = requireNonNull(tupleMapper);
     }
 
@@ -78,14 +67,16 @@ public class IndexerBolt extends AbstractEsBolt {
     @Override
     public void process(Tuple tuple) {
         try {
-            String string = StringEscapeUtils.unescapeJava(tuple.getString(4));
-            
             client.performRequest(
                     "post", 
-                    "/" + index + "/_doc/", 
+                    "/" + tuple.getSourceStreamId() + "/_doc/", 
                     Collections.EMPTY_MAP, 
-                    new StringEntity(string.substring(1, string.length() - 1), ContentType.APPLICATION_JSON)
+                    new StringEntity(
+                            ((JSONObject) tuple.getValueByField("source")).toJSONString(), 
+                            ContentType.APPLICATION_JSON
+                    )
             );
+            
             collector.ack(tuple);
         } catch (Exception e) {
             collector.reportError(e);

@@ -8,6 +8,7 @@ package com.btc.controller.bolts;
 import java.util.Map;
 import org.apache.storm.shade.org.apache.commons.lang.StringEscapeUtils;
 import org.apache.storm.shade.org.json.simple.JSONObject;
+import org.apache.storm.shade.org.json.simple.parser.JSONParser;
 import org.apache.storm.task.OutputCollector;
 import org.apache.storm.task.TopologyContext;
 import org.apache.storm.topology.OutputFieldsDeclarer;
@@ -20,7 +21,12 @@ import org.apache.storm.tuple.Values;
  *
  * @author ?
  */
-public class SplitterBolt extends BaseRichBolt {
+public class TransformerBolt extends BaseRichBolt {
+
+    /**
+     * 
+     */
+    private static final JSONParser PARSER = new JSONParser();
     
     /**
      *
@@ -33,8 +39,8 @@ public class SplitterBolt extends BaseRichBolt {
      */
     @Override
     public void declareOutputFields(OutputFieldsDeclarer declarer) {
-        declarer.declareStream("blocks", new Fields("source"));
-        declarer.declareStream("transactions", new Fields("source"));
+        declarer.declareStream("rates", new Fields("source"));
+        declarer.declareStream("transactions", new Fields("source"));        
     }
 
     /**
@@ -55,17 +61,13 @@ public class SplitterBolt extends BaseRichBolt {
     @Override
     public void execute(Tuple input) {
         try {
-            JSONObject object = (JSONObject) input.getValueByField("source");
+            TransformerBolt.PARSER.reset();
             
-            if (object.containsKey("total_amount")) {
-                this.collector.emit("transactions", new Values(object));
-            } else {
-                if (object.containsKey("found_by")) {
-                    this.collector.emit("blocks", new Values(object));
-                } else {
-                    System.out.println(input);
-                }
-            }
+            String string = StringEscapeUtils.unescapeJava(input.getString(4));
+    
+            JSONObject object = (JSONObject) TransformerBolt.PARSER.parse(string.substring(1, string.length() -1));
+            
+            this.collector.emit(input.getSourceComponent(), new Values(object));
             
             collector.ack(input);
         } catch (Exception e) {
