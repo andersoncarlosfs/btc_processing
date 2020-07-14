@@ -39,7 +39,7 @@ public class Main {
         builder.setSpout("rates_kafka_spout", new KafkaSpout<>(kafkaConfingRates.build()));
 
         // ElasticSearch         
-        builder.setBolt("index_elasticsearch_bolt", new IndexerBolt("rates")).shuffleGrouping("rates_kafka_spout");
+        builder.setBolt("rates_elasticsearch_bolt", new IndexerBolt("rates")).shuffleGrouping("rates_kafka_spout");
         
         // Transactions
         // Kafka
@@ -48,7 +48,7 @@ public class Main {
         builder.setSpout("transactions_kafka_spout", new KafkaSpout<>(kafkaConfigTransactions.build()));
 
         // ElasticSearch         
-        builder.setBolt("index_elasticsearch_bolt", new IndexerBolt("transactions")).shuffleGrouping("transactions_kafka_spout");
+        builder.setBolt("transactions_elasticsearch_bolt", new IndexerBolt("transactions")).shuffleGrouping("transactions_kafka_spout");
         
         // Configuring the topology
         Config config = new Config();
