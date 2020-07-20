@@ -56,7 +56,7 @@ public class Main {
                 .setBolt("transactions_storm_bolt", new SplitterBolt())
                 .shuffleGrouping("objects_storm_bolt", "transactions");        
         
-        // Converter         
+        // Converter
         builder
                 .setBolt("convertions_storm_bolt", new ConverterBolt())
                 .shuffleGrouping("objects_storm_bolt", "rates")

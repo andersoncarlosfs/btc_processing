@@ -15,6 +15,7 @@ import org.apache.storm.topology.base.BaseRichBolt;
 import org.apache.storm.tuple.Fields;
 import org.apache.storm.tuple.Tuple;
 import org.apache.storm.tuple.Values;
+import org.joda.time.Instant;
 
 /**
  *
@@ -56,11 +57,13 @@ public class SplitterBolt extends BaseRichBolt {
     public void execute(Tuple input) {
         try {
             JSONObject object = (JSONObject) input.getValueByField("source");
-            
+
             if (object.containsKey("total_amount")) {
                 this.collector.emit("transactions", new Values(object));
             } else {
                 if (object.containsKey("found_by")) {
+                    object.put("timestamp", new Instant((long) (object.get("timestamp")) * 1000).toDateTime().toString());
+                    System.out.println(object);
                     this.collector.emit("blocks", new Values(object));
                 } else {
                     System.out.println(input);
