@@ -67,7 +67,7 @@ public class ConverterBolt extends BaseRichBolt {
                 this.time = (String) object.get("timestamp");
                 this.euro = (Double) object.get("rate_float");
             } else {
-                if (object.containsKey("total_amount")) {
+                if (object.containsKey("total_amount") && this.time != null && this.euro != null) {
                     object.put("timestamp", this.time);
                     object.put("euro", ((Double) object.get("total_amount")) * this.euro);
                                         
