@@ -63,7 +63,6 @@ public class SplitterBolt extends BaseRichBolt {
             } else {
                 if (object.containsKey("found_by")) {
                     object.put("timestamp", new Instant((long) (object.get("timestamp")) * 1000).toDateTime().toString());
-                    System.out.println(object);
                     this.collector.emit("blocks", new Values(object));
                 } else {
                     System.out.println(input);
