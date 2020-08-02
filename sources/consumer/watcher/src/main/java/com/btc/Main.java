@@ -5,10 +5,7 @@
  */
 package com.btc;
 
-import com.btc.controller.bolts.ConverterBolt;
-import com.btc.controller.bolts.IndexerBolt;
-import com.btc.controller.bolts.SplitterBolt;
-import com.btc.controller.bolts.TransformerBolt;
+import com.btc.controller.bolts.*;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.storm.Config;
 import org.apache.storm.LocalCluster;
@@ -30,7 +27,7 @@ public class Main {
      *
      * @param args the command line arguments
      */
-    public static void main(String[] args) throws AlreadyAliveException, InvalidTopologyException, AuthorizationException, Exception {
+    public static void main(String[] args) throws Exception {
         // Building the topology
         TopologyBuilder builder = new TopologyBuilder();
 
@@ -54,20 +51,25 @@ public class Main {
         // Splitter
         builder
                 .setBolt("transactions_storm_bolt", new SplitterBolt())
-                .shuffleGrouping("objects_storm_bolt", "transactions");        
-        
+                .shuffleGrouping("objects_storm_bolt", "transactions");
+
+        // Querier
+        builder
+                .setBolt("queries_storm_bolt", new QuerierBolt())
+                .shuffleGrouping("transactions_storm_bolt", "blocks");
+
         // Converter
         builder
-                .setBolt("convertions_storm_bolt", new ConverterBolt())
+                .setBolt("conversions_storm_bolt", new ConverterBolt())
                 .shuffleGrouping("objects_storm_bolt", "rates")
-                .shuffleGrouping("transactions_storm_bolt", "transactions");        
+                .shuffleGrouping("transactions_storm_bolt", "transactions");
         
         // ElasticSearch         
         builder
                 .setBolt("objects_elasticsearch_bolt", new IndexerBolt())
                 .shuffleGrouping("objects_storm_bolt", "rates")
-                .shuffleGrouping("transactions_storm_bolt", "blocks")
-                .shuffleGrouping("convertions_storm_bolt", "transactions");
+                .shuffleGrouping("queries_storm_bolt", "blocks")
+                .shuffleGrouping("conversions_storm_bolt", "transactions");
         
         // Configuring the topology
         Config config = new Config();
