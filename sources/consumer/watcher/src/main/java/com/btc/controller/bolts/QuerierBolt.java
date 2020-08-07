@@ -46,6 +46,13 @@ public class QuerierBolt extends BaseRichBolt {
 
     /**
      *
+     */
+    private String time;
+    private Double euro;
+    private Double block_reward; // Reward since 12/05/2020
+
+    /**
+     *
      * @param declarer
      */
     @Override
@@ -62,6 +69,7 @@ public class QuerierBolt extends BaseRichBolt {
     @Override
     public void prepare(Map<String, Object> topoConf, TopologyContext context, OutputCollector collector) {
         this.collector = collector;
+        this.block_reward = 6.25;
     }
 
     /**
@@ -75,30 +83,31 @@ public class QuerierBolt extends BaseRichBolt {
 
             JSONObject object = (JSONObject) input.getValueByField("source");
 
-            String string = "https://chain.api.btc.com/v3/block/" + object.get("hash");
-            URLConnection urlConnection = new URL(string).openConnection();
-            urlConnection.addRequestProperty("User-Agent", "Mozilla");
-            urlConnection.setReadTimeout(5000);
-            urlConnection.setConnectTimeout(5000);
-            InputStream inputStream = urlConnection.getInputStream();
+            if (object.containsKey("rate")) {
+                this.time = (String) object.get("timestamp");
+                this.euro = (Double) object.get("rate");
+            }else {
+                String string = "https://chain.api.btc.com/v3/block/" + object.get("hash");
+                URLConnection urlConnection = new URL(string).openConnection();
+                urlConnection.addRequestProperty("User-Agent", "Mozilla");
+                urlConnection.setReadTimeout(5000);
+                urlConnection.setConnectTimeout(5000);
+                InputStream inputStream = urlConnection.getInputStream();
 
-            JSONParser jsonParser = new JSONParser();
-            JSONObject extra = (JSONObject) jsonParser.parse(
-                    new InputStreamReader(inputStream, StandardCharsets.UTF_8)
-            );
+                JSONParser jsonParser = new JSONParser();
+                JSONObject extra = (JSONObject) jsonParser.parse(
+                        new InputStreamReader(inputStream, StandardCharsets.UTF_8)
+                );
 
-            extra = (JSONObject) ((JSONObject) extra.getOrDefault("data", new JSONObject())).getOrDefault("extras", new JSONObject());
+                extra = (JSONObject) ((JSONObject) extra.getOrDefault("data", new JSONObject())).getOrDefault("extras", new JSONObject());
 
-            object.put(
-                    "timestamp",
-                    ZonedDateTime.ofInstant(
-                            Instant.ofEpochSecond((Long) object.get("timestamp")), ZoneId.systemDefault()
-                    ).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
-            );
+                object.put("timestamp", this.time);
+                object.put("found_by", (String) extra.get("pool_name"));
+                object.put("block_reward_btc", block_reward);
+                object.put("block_reward_euro", block_reward * this.euro);
 
-            object.put("found_by", (String) extra.get("pool_name"));
-            
-            this.collector.emit(input.getSourceComponent(), new Values(object));
+                this.collector.emit(input.getSourceComponent(), new Values(object));
+            }
             
             collector.ack(input);
         } catch (Exception e) {
