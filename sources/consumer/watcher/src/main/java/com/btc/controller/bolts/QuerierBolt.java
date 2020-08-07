@@ -5,7 +5,11 @@
  */
 package com.btc.controller.bolts;
 
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
+import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -72,9 +76,15 @@ public class QuerierBolt extends BaseRichBolt {
             JSONObject object = (JSONObject) input.getValueByField("source");
 
             String string = "https://chain.api.btc.com/v3/block/" + object.get("hash");
+            URLConnection urlConnection = new URL(string).openConnection();
+            urlConnection.addRequestProperty("User-Agent", "Mozilla");
+            urlConnection.setReadTimeout(5000);
+            urlConnection.setConnectTimeout(5000);
+            InputStream inputStream = urlConnection.getInputStream();
 
-            JSONObject extra = (JSONObject) QuerierBolt.PARSER.parse(
-                    IOUtils.toString(new URL(string), Charsets.UTF_8)
+            JSONParser jsonParser = new JSONParser();
+            JSONObject extra = (JSONObject) jsonParser.parse(
+                    new InputStreamReader(inputStream, StandardCharsets.UTF_8)
             );
 
             extra = (JSONObject) ((JSONObject) extra.getOrDefault("data", new JSONObject())).getOrDefault("extras", new JSONObject());
