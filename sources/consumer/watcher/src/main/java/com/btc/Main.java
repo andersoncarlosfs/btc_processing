@@ -56,6 +56,7 @@ public class Main {
         // Querier
         builder
                 .setBolt("queries_storm_bolt", new QuerierBolt())
+                .shuffleGrouping("objects_storm_bolt", "rates")
                 .shuffleGrouping("transactions_storm_bolt", "blocks");
 
         // Converter

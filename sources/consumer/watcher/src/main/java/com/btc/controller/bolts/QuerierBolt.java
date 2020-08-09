@@ -82,7 +82,6 @@ public class QuerierBolt extends BaseRichBolt {
             QuerierBolt.PARSER.reset();
 
             JSONObject object = (JSONObject) input.getValueByField("source");
-
             if (object.containsKey("rate")) {
                 this.time = (String) object.get("timestamp");
                 this.euro = (Double) object.get("rate");
@@ -90,8 +89,6 @@ public class QuerierBolt extends BaseRichBolt {
                 String string = "https://chain.api.btc.com/v3/block/" + object.get("hash");
                 URLConnection urlConnection = new URL(string).openConnection();
                 urlConnection.addRequestProperty("User-Agent", "Mozilla");
-                urlConnection.setReadTimeout(5000);
-                urlConnection.setConnectTimeout(5000);
                 InputStream inputStream = urlConnection.getInputStream();
 
                 JSONParser jsonParser = new JSONParser();
@@ -100,13 +97,12 @@ public class QuerierBolt extends BaseRichBolt {
                 );
 
                 extra = (JSONObject) ((JSONObject) extra.getOrDefault("data", new JSONObject())).getOrDefault("extras", new JSONObject());
-
                 object.put("timestamp", this.time);
                 object.put("found_by", (String) extra.get("pool_name"));
                 object.put("block_reward_btc", block_reward);
                 object.put("block_reward_euro", block_reward * this.euro);
 
-                this.collector.emit(input.getSourceComponent(), new Values(object));
+                this.collector.emit("blocks", new Values(object));
             }
             
             collector.ack(input);
