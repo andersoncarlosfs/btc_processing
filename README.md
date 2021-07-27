@@ -5,6 +5,7 @@ Mais d'où les bitcoins viennent-ils ? Pour les générer (on dit : "miner") il 
 
 # Ressources
 - Docker
+- Elasticsearch
 - Kafka 
 - Storm
 
