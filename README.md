@@ -26,28 +26,12 @@ The results are outputted by API call or written in a volume. An improvement cou
 ## API call
 The results can be visualised from "[http://0.0.0.0:5001/view]('http://0.0.0.0:5001/view')".
 
-## Volume
-The results are written in a volume ending with *"_streamflow"*. Before accesing the files in the folder "output", the volume ending with *"_streamflow"* should be attached to a container, for instance: "busybox".
-
-### Mounting 
-```
-$docker run -it -v Lalamove_streamflow:/volume ubuntu bin/bash
-```
-
-### Reading
-```
-$cd volume/output/
-```
-
 # Failover
 - If one of the services crashes, it will be restarted automatically by docker-compose (Daemon)
 
 # Scaling
 - Deployment of more nodes in a cluster Spark cluster (workers) and/or Kafka cluster (brokers). 
 - Broadcasting the results via Kafka
-
-# Limitations
-- The consumer gets the data at once. However, it supports stream processing
 
 # Copyrights
 - OpenClassrooms
