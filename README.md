@@ -20,11 +20,6 @@ $docker-compose up
 ```
 $docker-compose up -d
 ```
-# Results
-The results are outputted by API call or written in a volume. An improvement could be the broadcasting of the results.
-
-## API call
-The results can be visualised from "[http://0.0.0.0:5001/view]('http://0.0.0.0:5001/view')".
 
 # Failover
 - If one of the services crashes, it will be restarted automatically by docker-compose (Daemon)
